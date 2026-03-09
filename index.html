@@ -661,7 +661,7 @@
             const data = Object.fromEntries(new FormData(e.target).entries());
 
             try {
-                const res = await fetch("https://l3j2qk3a.rcsrv.net/webhook-test/leavefrom", {
+                const res = await fetch("https://l3j2qk3a.rcsrv.net/webhook/leavefrom", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data),
