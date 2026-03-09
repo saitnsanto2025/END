@@ -319,6 +319,7 @@
                                 <option value="Customer support">Customer support</option>
                                 <option value="Marketing">Marketing</option>
                                 <option value="Tech">Tech</option>
+                                <option value="Tech Management">Tech Management</option>
                                 <option value="Business Development/Education">Business Development/Education</option>
                                 <option value="Heads of state">Heads of state</option>
                             </select>
@@ -451,6 +452,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
+        const EMPLOYEE_ENDPOINT = "https://dhrx9wkc.rpcld.co/webhook/number";
+
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             return {
@@ -480,16 +483,32 @@
         }
 
         function normalizeDepartment(value) {
-            return String(value || "").trim().toLowerCase();
+            const v = String(value || "").trim().toLowerCase();
+            if (v === "tech") return "tech management";
+            return v;
         }
 
         function extractEmployees(payload) {
             if (Array.isArray(payload)) return payload;
-            if (payload && Array.isArray(payload.data)) return payload.data;
             if (payload && Array.isArray(payload.rows)) return payload.rows;
+            if (payload && Array.isArray(payload.data)) return payload.data;
             if (payload && Array.isArray(payload.items)) return payload.items;
             if (payload && Array.isArray(payload.result)) return payload.result;
             return [];
+        }
+
+        async function fetchAllEmployees() {
+            const res = await fetch(EMPLOYEE_ENDPOINT);
+            if (!res.ok) throw new Error("Failed to load employee list");
+            const payload = await res.json();
+            return extractEmployees(payload);
+        }
+
+        async function fetchEmployeeByEmail(email) {
+            const employees = await fetchAllEmployees();
+            return employees.find(emp =>
+                String(emp["Your company email address"] || "").toLowerCase() === String(email || "").toLowerCase()
+            ) || null;
         }
 
         function prefillForm() {
@@ -523,17 +542,11 @@
             leaveDaysRemainingEl.textContent = "Loading...";
 
             try {
-                const res = await fetch(
-                    `https://dhrx9wkc.rpcld.co/webhook/number?email=${encodeURIComponent(applicantData.applicantEmail)}`
-                );
-
-                if (!res.ok) throw new Error("Failed to load days");
-
-                const data = await res.json();
-                const remaining = data["DAYS"] ?? data["days"] ?? data["Days"] ?? "N/A";
+                const employee = await fetchEmployeeByEmail(applicantData.applicantEmail);
+                const remaining = employee ? (employee["DAYS"] ?? "N/A") : "N/A";
                 leaveDaysRemainingEl.textContent = remaining;
             } catch (error) {
-                console.error(error);
+                console.error("Days error:", error);
                 leaveDaysRemainingEl.textContent = "Unavailable";
             }
         }
@@ -541,38 +554,22 @@
         async function loadDelegatesByDepartment() {
             const applicantData = getQueryParams();
             const delegateEmailSelect = document.getElementById("delegateEmail");
-            const department = applicantData.department;
-            const applicantEmail = applicantData.applicantEmail;
 
             delegateEmailSelect.innerHTML = '<option value="">Loading department members...</option>';
             delegateEmailSelect.disabled = true;
 
-            if (!department) {
-                delegateEmailSelect.innerHTML = '<option value="">No department found</option>';
-                return;
-            }
-
             try {
-                const res = await fetch(
-                    `https://dhrx9wkc.rpcld.co/webhook-test/department?department=${encodeURIComponent(department)}`
-                );
-
-                if (!res.ok) throw new Error("Failed to load department employees");
-
-                const payload = await res.json();
-                const employees = extractEmployees(payload);
-
-                delegateEmailSelect.innerHTML = '<option value="">Select delegate\'s email</option>';
+                const employees = await fetchAllEmployees();
+                const applicantDept = normalizeDepartment(applicantData.department);
+                const applicantEmail = String(applicantData.applicantEmail || "").toLowerCase();
 
                 const filteredEmployees = employees.filter(emp => {
-                    const email = emp["Your company email address"] || "";
-                    const empDepartment = emp["Department"] || "";
-                    return (
-                        email &&
-                        normalizeDepartment(empDepartment) === normalizeDepartment(department) &&
-                        email.toLowerCase() !== String(applicantEmail || "").toLowerCase()
-                    );
+                    const email = String(emp["Your company email address"] || "").toLowerCase();
+                    const dept = normalizeDepartment(emp["Department"]);
+                    return email && dept === applicantDept && email !== applicantEmail;
                 });
+
+                delegateEmailSelect.innerHTML = '<option value="">Select delegate\'s email</option>';
 
                 if (filteredEmployees.length === 0) {
                     delegateEmailSelect.innerHTML = '<option value="">No delegates available in your department</option>';
@@ -581,15 +578,17 @@
                 }
 
                 filteredEmployees.forEach(emp => {
+                    const email = emp["Your company email address"];
+                    const fullName = emp["Full Name"] || "No name";
                     const option = document.createElement("option");
-                    option.value = emp["Your company email address"];
-                    option.textContent = `${emp["Your company email address"]} - ${emp["Full Name"]}`;
+                    option.value = email;
+                    option.textContent = `${email} - ${fullName}`;
                     delegateEmailSelect.appendChild(option);
                 });
 
                 delegateEmailSelect.disabled = false;
             } catch (error) {
-                console.error("Error loading delegates:", error);
+                console.error("Delegates error:", error);
                 delegateEmailSelect.innerHTML = '<option value="">Failed to load delegates</option>';
                 delegateEmailSelect.disabled = true;
             }
@@ -599,17 +598,11 @@
             if (!email) return;
 
             try {
-                const res = await fetch(
-                    `https://dhrx9wkc.rpcld.co/webhook/number?email=${encodeURIComponent(email)}`
-                );
+                const employee = await fetchEmployeeByEmail(email);
 
-                if (!res.ok) throw new Error("Failed to fetch delegate details");
-
-                const data = await res.json();
-
-                document.getElementById("delegateName").value = data["Full Name"] || "";
-                document.getElementById("delegatePhone").value = data["Phone Number"] || "";
-                document.getElementById("delegatePosition").value = data["Position/Role"] || "";
+                document.getElementById("delegateName").value = employee ? (employee["Full Name"] || "") : "";
+                document.getElementById("delegatePhone").value = employee ? (employee["Phone Number"] || "") : "";
+                document.getElementById("delegatePosition").value = employee ? (employee["Position/Role"] || "") : "";
             } catch (error) {
                 console.error("Delegate lookup error:", error);
                 document.getElementById("delegateName").value = "";
