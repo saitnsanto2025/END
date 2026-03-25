@@ -27,23 +27,23 @@
             textMain: "#2d3338",
             textSoft: "#636e72",
             primarySoft: "#eddcff",
-            primarySoftDark: "#e2cbff",
+            primarySoftDark: "#e2cbff"
           },
           fontFamily: {
             heading: ["Manrope", "sans-serif"],
-            body: ["Inter", "sans-serif"],
+            body: ["Inter", "sans-serif"]
           },
           boxShadow: {
             soft: "0 10px 30px rgba(115, 69, 182, 0.08)",
-            panel: "0 12px 32px rgba(15, 23, 42, 0.06)",
+            panel: "0 12px 32px rgba(15, 23, 42, 0.06)"
           }
         }
       }
-    }
+    };
   </script>
 
-  <style>
-    .flatpickr-calendar.inline {
+<style>
+  .flatpickr-calendar.inline {
     display: inline-block !important;
     width: 100% !important;
     min-width: 320px !important;
@@ -149,7 +149,8 @@
   .flatpickr-next-month {
     fill: #7345b6 !important;
     padding: 6px !important;
-  </style>
+  }
+</style>
 </head>
 <body class="min-h-screen bg-background text-textMain">
   <header class="sticky top-0 z-40 w-full border-b border-surfaceBorder/70 bg-white/85 backdrop-blur">
@@ -157,13 +158,13 @@
       <div class="flex items-center gap-4">
         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-soft ring-1 ring-surfaceBorder">
           <img
-            src="https://raw.githubusercontent.com/saitnsanto2025/mAZURI/b1657d9bb9083afdfb4ddd91ba1c1e3ef415d6db/logo.svg"
+            src="https://raw.githubusercontent.com/saitnsanto2025/logic/refs/heads/main/Logo-dark%20(1).png"
             alt="DCash Logo"
-            class="max-h-12 w-auto"
+            class="max-h-10 w-auto"
           />
         </div>
         <div>
-          <h1 class="brand-font text-lg font-extrabold tracking-tight text-textMain md:text-xl">DCash Leavform</h1>
+          <h1 class="brand-font text-lg font-extrabold tracking-tight text-textMain md:text-xl">DCash Leaveform</h1>
           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-surfaceMuted">Leave Management Portal</p>
         </div>
       </div>
@@ -464,6 +465,7 @@
 
   <script>
     const EMPLOYEE_ENDPOINT = "https://dhrx9wkc.rpcld.co/webhook/number";
+    let maxAllowedDays = 0;
 
     function getQueryParams() {
       const params = new URLSearchParams(window.location.search);
@@ -481,6 +483,7 @@
 
     function setSelectValue(selectElement, value) {
       if (!selectElement) return;
+
       const optionExists = Array.from(selectElement.options).some(option => option.value === value);
       if (optionExists) {
         selectElement.value = value;
@@ -506,6 +509,80 @@
       if (payload && Array.isArray(payload.items)) return payload.items;
       if (payload && Array.isArray(payload.result)) return payload.result;
       return [];
+    }
+
+    function parseBalanceToWholeDays(value) {
+      const n = parseFloat(String(value).replace(/[^\d.]/g, ""));
+      if (Number.isNaN(n) || n < 0) return 0;
+      return Math.floor(n);
+    }
+
+    function updateDaysDisplay(totalDays) {
+      document.getElementById("totalDays").textContent = `${totalDays} day${totalDays === 1 ? "" : "s"}`;
+      document.getElementById("daysRequested").value = totalDays;
+    }
+
+    function updateSelectedDatesFields(selectedDates) {
+      const formattedDates = selectedDates.map(date => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      });
+
+      document.getElementById("datesToSubmit").value = formattedDates.join(", ");
+      document.getElementById("leaveDates").value = formattedDates.join(", ");
+    }
+
+    function clearSelectedDates() {
+      leaveDatesPicker.clear();
+      updateDaysDisplay(0);
+      document.getElementById("datesToSubmit").value = "";
+      document.getElementById("leaveDates").value = "";
+    }
+
+    function validateBeforeSubmit() {
+      const leaveType = document.getElementById("leaveType").value.trim();
+      const selectedDates = leaveDatesPicker.selectedDates || [];
+      const delegateEmail = document.getElementById("delegateEmail").value.trim();
+      const delegateName = document.getElementById("delegateName").value.trim();
+      const delegatePhone = document.getElementById("delegatePhone").value.trim();
+      const delegatePosition = document.getElementById("delegatePosition").value.trim();
+      const daysRequested = selectedDates.length;
+
+      if (!leaveType) {
+        alert("Please select the leave type.");
+        document.getElementById("leaveType").focus();
+        return false;
+      }
+
+      if (daysRequested === 0) {
+        alert("Please select at least one leave date.");
+        return false;
+      }
+
+      if (maxAllowedDays <= 0) {
+        alert("You do not have any leave days remaining.");
+        return false;
+      }
+
+      if (daysRequested > maxAllowedDays) {
+        alert(`You cannot select more than ${maxAllowedDays} leave day${maxAllowedDays === 1 ? "" : "s"} based on your remaining balance.`);
+        return false;
+      }
+
+      if (!delegateEmail) {
+        alert("Please select a delegate email.");
+        document.getElementById("delegateEmail").focus();
+        return false;
+      }
+
+      if (!delegateName || !delegatePhone || !delegatePosition) {
+        alert("Delegate details are incomplete. Please select a valid delegate.");
+        return false;
+      }
+
+      return true;
     }
 
     async function fetchAllEmployees() {
@@ -547,18 +624,29 @@
 
       if (!applicantData.applicantEmail) {
         leaveDaysRemainingEl.textContent = "N/A";
+        maxAllowedDays = 0;
         return;
       }
 
       leaveDaysRemainingEl.textContent = "Loading...";
+      maxAllowedDays = 0;
 
       try {
         const employee = await fetchEmployeeByEmail(applicantData.applicantEmail);
-        const remaining = employee ? (employee["DAYS"] ?? "N/A") : "N/A";
-        leaveDaysRemainingEl.textContent = remaining;
+        const remainingRaw = employee ? (employee["DAYS"] ?? "N/A") : "N/A";
+        leaveDaysRemainingEl.textContent = remainingRaw;
+
+        maxAllowedDays = parseBalanceToWholeDays(remainingRaw);
+
+        const currentlySelected = leaveDatesPicker.selectedDates || [];
+        if (currentlySelected.length > maxAllowedDays) {
+          alert(`Your current selection is more than your available balance. You can only select up to ${maxAllowedDays} day${maxAllowedDays === 1 ? "" : "s"}.`);
+          clearSelectedDates();
+        }
       } catch (error) {
         console.error("Days error:", error);
         leaveDaysRemainingEl.textContent = "Unavailable";
+        maxAllowedDays = 0;
       }
     }
 
@@ -627,28 +715,24 @@
       inline: true,
       mode: "multiple",
       dateFormat: "Y-m-d",
-      onChange: function (selectedDates) {
-        const totalDays = selectedDates.length;
-        document.getElementById("totalDays").textContent = `${totalDays} days`;
-        document.getElementById("daysRequested").value = totalDays;
+      onChange: function(selectedDates) {
+        if (maxAllowedDays > 0 && selectedDates.length > maxAllowedDays) {
+          alert(`You only have ${maxAllowedDays} leave day${maxAllowedDays === 1 ? "" : "s"} remaining. Please reduce the selected dates.`);
+          const trimmedDates = selectedDates.slice(0, maxAllowedDays);
+          leaveDatesPicker.setDate(trimmedDates, true);
+          return;
+        }
 
-        const formattedDates = selectedDates.map(date => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, "0");
-          const day = String(date.getDate()).padStart(2, "0");
-          return `${year}-${month}-${day}`;
-        });
-
-        document.getElementById("datesToSubmit").value = formattedDates.join(", ");
-        document.getElementById("leaveDates").value = formattedDates.join(", ");
+        updateDaysDisplay(selectedDates.length);
+        updateSelectedDatesFields(selectedDates);
       }
     });
 
-    document.getElementById("handoverNotes").addEventListener("input", function () {
+    document.getElementById("handoverNotes").addEventListener("input", function() {
       document.getElementById("charCount").textContent = this.value.length;
     });
 
-    document.getElementById("delegateEmail").addEventListener("change", async function () {
+    document.getElementById("delegateEmail").addEventListener("change", async function() {
       document.getElementById("delegateName").value = "";
       document.getElementById("delegatePhone").value = "";
       document.getElementById("delegatePosition").value = "";
@@ -661,6 +745,10 @@
     document.getElementById("leaveForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      if (!validateBeforeSubmit()) {
+        return;
+      }
+
       const btn = document.querySelector(".submit-btn");
       const originalText = btn.textContent;
       btn.textContent = "Submitting...";
@@ -672,16 +760,14 @@
         const res = await fetch("https://l3j2qk3a.rcsrv.net/webhook/leavefrom", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         });
 
         if (res.ok) {
           alert("Leave form submitted successfully!");
           e.target.reset();
-          leaveDatesPicker.clear();
-          document.getElementById("totalDays").textContent = "0 days";
+          clearSelectedDates();
           document.getElementById("charCount").textContent = "0";
-          document.getElementById("leaveDates").value = "";
           document.getElementById("leaveDaysRemaining").textContent = "Loading...";
           document.getElementById("delegateName").value = "";
           document.getElementById("delegatePhone").value = "";
@@ -703,6 +789,7 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       prefillForm();
+      updateDaysDisplay(0);
       await loadDelegatesByDepartment();
       await loadLeaveDaysRemaining();
     });
