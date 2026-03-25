@@ -1,703 +1,711 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leave Application Form</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leave Application - DCash HR</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#7345b6",
+            secondary: "#853bb5",
+            background: "#f9f9fb",
+            surface: "#f9f9fb",
+            surfaceLow: "#f2f4f6",
+            surfaceCard: "#ffffff",
+            surfaceBorder: "#dde3e9",
+            surfaceMuted: "#596065",
+            textMain: "#2d3338",
+            textSoft: "#636e72",
+            primarySoft: "#eddcff",
+            primarySoftDark: "#e2cbff",
+          },
+          fontFamily: {
+            heading: ["Manrope", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+          },
+          boxShadow: {
+            soft: "0 10px 30px rgba(115, 69, 182, 0.08)",
+            panel: "0 12px 32px rgba(15, 23, 42, 0.06)",
+          }
         }
+      }
+    }
+  </script>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-            padding: 20px;
-        }
+  <style>
+    .flatpickr-calendar.inline {
+    display: inline-block !important;
+    width: 100% !important;
+    min-width: 320px !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+  .flatpickr-innerContainer {
+    display: block !important;
+    width: 100% !important;
+  }
 
-        .header {
-            text-align: center;
-            padding: 30px 20px;
-            background: white;
-            border-bottom: 1px solid #e9ecef;
-        }
+  .flatpickr-rContainer {
+    width: 100% !important;
+  }
 
-        .logo {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  .flatpickr-months {
+    display: flex !important;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 0 8px;
+  }
 
-        .logo img {
-            height: 70px;
-            width: auto;
-            display: block;
-        }
+  .flatpickr-month {
+    background: transparent !important;
+  }
 
-        .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #2d3436;
-        }
+  .flatpickr-current-month {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    color: #2d3338;
+    padding-top: 6px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    left: 0 !important;
+  }
 
-        .header p {
-            color: #636e72;
-            font-size: 14px;
-        }
+  .flatpickr-current-month .flatpickr-monthDropdown-months,
+  .flatpickr-current-month input.cur-year {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    height: auto !important;
+  }
 
-        .form-container {
-            padding: 30px;
-        }
+  .flatpickr-weekdays {
+    display: flex !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
 
-        .section {
-            margin-bottom: 32px;
-        }
+  .flatpickr-weekdaycontainer {
+    display: flex !important;
+    width: 100% !important;
+  }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
-            color: #2d3436;
-        }
+  .flatpickr-weekday {
+    color: #596065 !important;
+    font-weight: 700;
+    font-size: 12px;
+  }
 
-        .section-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c5ce7;
-        }
+  .flatpickr-days {
+    width: 100% !important;
+  }
 
-        .section-icon svg {
-            width: 20px;
-            height: 20px;
-            fill: #6c5ce7;
-            stroke: none;
-        }
+  .dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
 
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
+  .flatpickr-day {
+    border-radius: 12px !important;
+    width: 14.285% !important;
+    max-width: 14.285% !important;
+    flex: 0 0 14.285% !important;
+    line-height: 39px;
+    height: 40px;
+    border: 1px solid transparent;
+  }
 
-        .section-subtitle {
-            color: #636e72;
-            font-size: 13px;
-        }
+  .flatpickr-day.selected,
+  .flatpickr-day.startRange,
+  .flatpickr-day.endRange {
+    background: #7345b6 !important;
+    border-color: #7345b6 !important;
+    color: #fff !important;
+  }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
+  .flatpickr-day:hover {
+    background: #eddcff !important;
+    border-color: #eddcff !important;
+    color: #2d3338 !important;
+  }
 
-        .form-group {
-            position: relative;
-        }
+  .flatpickr-day.today {
+    border-color: #7345b6 !important;
+  }
 
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            color: #2d3436;
-            font-size: 14px;
-        }
-
-        .required {
-            color: #e17055;
-        }
-
-        input:not([readonly]), select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            background: #f8f9fa;
-            color: #636e72;
-            font-family: inherit;
-        }
-
-        input:not([readonly]):focus, select:focus, textarea:focus {
-            outline: none;
-            background: #f1f3f4;
-        }
-
-        select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236c5ce7' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 12px center;
-            background-repeat: no-repeat;
-            background-size: 16px;
-            padding-right: 40px;
-        }
-
-        .locked-field {
-            background: #eef1f5 !important;
-            color: #5f6b76 !important;
-            cursor: not-allowed !important;
-        }
-
-        .days-info {
-            background: #e8f4fd;
-            color: #2d3436;
-            padding: 16px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-            border: 1px solid #ddd;
-        }
-
-        .days-info-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .days-info-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            color: #6c5ce7;
-        }
-
-        .days-count {
-            font-size: 20px;
-            font-weight: 600;
-            color: #2d3436;
-        }
-
-        .leave-remaining {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-top: 6px;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .char-count {
-            text-align: right;
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .submit-btn {
-            background: #6c5ce7;
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 24px;
-            width: 100%;
-        }
-
-        .submit-btn:hover {
-            background: #5a4fcf;
-        }
-
-        @media (max-width: 640px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .form-container {
-                padding: 20px;
-            }
-
-            .logo img {
-                height: 58px;
-            }
-        }
-    </style>
+  .flatpickr-prev-month,
+  .flatpickr-next-month {
+    fill: #7345b6 !important;
+    padding: 6px !important;
+  </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <img src="https://raw.githubusercontent.com/saitnsanto2025/logic/refs/heads/main/Logo-dark%20(1).png" alt="DCash Logo">
-            </div>
-            <h1>LEAVE APPLICATION</h1>
-            <p>Please complete all required fields</p>
+<body class="min-h-screen bg-background text-textMain">
+  <header class="sticky top-0 z-40 w-full border-b border-surfaceBorder/70 bg-white/85 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
+      <div class="flex items-center gap-4">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-soft ring-1 ring-surfaceBorder">
+          <img
+            src="https://raw.githubusercontent.com/saitnsanto2025/mAZURI/b1657d9bb9083afdfb4ddd91ba1c1e3ef415d6db/logo.svg"
+            alt="DCash Logo"
+            class="max-h-12 w-auto"
+          />
         </div>
-
-        <div class="form-container">
-            <form id="leaveForm">
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="section-title">Personal Details</div>
-                            <div class="section-subtitle">Your personal details</div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="applicantEmailDisplay">Your company email address <span class="required">*</span></label>
-                            <select id="applicantEmailDisplay" disabled class="locked-field">
-                                <option value="">Select your email</option>
-                                <option value="shiku.muchoki@dcash.africa">shiku.muchoki@dcash.africa</option>
-                                <option value="peter.kayere@dcash.africa">peter.kayere@dcash.africa</option>
-                                <option value="paul.wahome@dcash.africa">paul.wahome@dcash.africa</option>
-                                <option value="liz.wangechi@dcash.africa">liz.wangechi@dcash.africa</option>
-                                <option value="lenny.steve@dcash.co.ke">lenny.steve@dcash.co.ke</option>
-                                <option value="bridget.wanjiku@dcash.co.ke">bridgetwanjiku@dcash.co.ke</option>
-                                <option value="charlotte.mumbi@dcash.co.ke">charlotte.mumbi@dcash.co.ke</option>
-                                <option value="ritamargret@dcash.co.ke">ritamargret@dcash.co.ke</option>
-                                <option value="mike.muiruri@dcash.co.ke">mike.muiruri@dcash.co.ke</option>
-                                <option value="victor.mwakireti@dcash.co.ke">victor.mwakireti@dcash.co.ke</option>
-                                <option value="ian.masae@dcash.co.ke">ian.masae@dcash.co.ke</option>
-                                <option value="stephen.agai@dcash.co.ke">stephen.agai@dcash.co.ke</option>
-                                <option value="victor.kilyungi@dcash.co.ke">victor.kilyungi@dcash.co.ke</option>
-                                <option value="daniel.dawe@dcash.co.ke">daniel.dawe@dcash.co.ke</option>
-                                <option value="robinson.muhia@dcash.co.ke">robinson.muhia@dcash.co.ke</option>
-                                <option value="ephraim.kisaka@dcash.co.ke">ephraim.kisaka@dcash.co.ke</option>
-                                <option value="alex.njoroge@dcash.co.ke">alex.njoroge@dcash.co.ke</option>
-                                <option value="lina.muthoni@dcash.co.ke">lina.muthoni@dcash.co.ke</option>
-                                <option value="cecily.wahome@dcash.co.ke">cecily.wahome@dcash.co.ke</option>
-                                <option value="geoffrey.k.omukuba@dcash.co.ke">geoffrey.k.omukuba@dcash.co.ke</option>
-                                <option value="miles.muchoki@dcash.co.ke">miles.muchoki@dcash.co.ke</option>
-                            </select>
-                            <input type="hidden" name="applicantEmail" id="applicantEmail">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="employeeNumber">Employee number</label>
-                            <input id="employeeNumber" name="Employee number" type="number" required readonly class="locked-field">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fullName">Full Name</label>
-                            <input id="fullName" name="Full Name" required readonly class="locked-field">
-                        </div>
-                        <div class="form-group">
-                            <label for="position">Position/Role</label>
-                            <input id="position" name="Position/Role" required readonly class="locked-field">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="departmentDisplay">Department <span class="required">*</span></label>
-                            <select id="departmentDisplay" disabled class="locked-field">
-                                <option value="">Select department</option>
-                                <option value="Customer support">Customer support</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Tech">Tech</option>
-                                <option value="Tech Management">Tech Management</option>
-                                <option value="Business Development/Education">Business Development/Education</option>
-                                <option value="Heads of state">Heads of state</option>
-                            </select>
-                            <input type="hidden" name="department" id="department">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="supervisorDisplay">Immediate Supervisor <span class="required">*</span></label>
-                            <select id="supervisorDisplay" disabled class="locked-field">
-                                <option value="">Select supervisor</option>
-                                <option value="Steve Lenny (Marketing)">Steve Lenny (Marketing)</option>
-                                <option value="Paul Wahome (BD & Education)">Paul Wahome (BD & Education)</option>
-                                <option value="Victor Kilyungi (Tech)">Victor Kilyungi (Tech)</option>
-                                <option value="Rita Margaret (Customer Support)">Rita Margaret (Customer Support)</option>
-                                <option value="Elizabeth Wangechi (HR)">Elizabeth Wangechi (HR)</option>
-                                <option value="Ian Masae (Tech)">Ian Masae (Tech)</option>
-                            </select>
-                            <input type="hidden" name="Immediate Supervisor" id="supervisor">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="section-title">Leave Information</div>
-                            <div class="section-subtitle">Specify the type and duration of your leave</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="leaveType">Leave Type <span class="required">*</span></label>
-                        <select name="leaveType" id="leaveType" required>
-                            <option value="">Select leave type</option>
-                            <option value="annual">Annual Leave</option>
-                            <option value="sick">Sick Leave</option>
-                            <option value="maternity">Maternity Leave (90 days)</option>
-                            <option value="paternity">Paternity Leave (14 days)</option>
-                            <option value="emergency">Emergency Leave</option>
-                            <option value="off duty">Off duty</option>
-                            <option value="Leave without pay">Leave without pay</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group full-width">
-                            <label for="leaveDates">Select Leave Dates <span class="required">*</span></label>
-                            <input type="text" id="leaveDates" placeholder="Click to pick one or more dates..." required readonly>
-                        </div>
-                    </div>
-
-                    <div class="days-info">
-                        <div class="days-info-left">
-                            <div class="days-info-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div>Total Days Taken</div>
-                                <div style="font-size: 12px; opacity: 0.7;">(Include weekends)</div>
-                                <div class="leave-remaining">
-                                    Leave Days Remaining: <strong id="leaveDaysRemaining">Loading...</strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="days-count" id="totalDays">0 days</div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M16 3c1.1 0 2 .9 2 2v1h4v2h-1v9c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V8H2V6h4V5c0-1.1.9-2 2-2h8zM8 5v1h8V5H8zm11 3H5v9h14V8zM7 10h2v7H7v-7zm4 0h2v7h-2v-7zm4 0h2v7h-2v-7z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="section-title">Work Handover / Delegation</div>
-                            <div class="section-subtitle">Specify who will handle your responsibilities during your absence</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="delegateName">Delegate Name <span class="required">*</span></label>
-                        <input type="text" name="delegateName" id="delegateName" placeholder="Full name of delegate" required readonly class="locked-field">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="delegateEmail">Delegate's email address <span class="required">*</span></label>
-                            <select name="delegateEmail" id="delegateEmail" required>
-                                <option value="">Select delegate's email</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="delegatePhone">Delegate's Contact Number <span class="required">*</span></label>
-                            <input type="tel" name="delegatePhone" id="delegatePhone" placeholder="+254 712 345 678" required readonly class="locked-field">
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="delegatePosition">Delegate's Position/Role <span class="required">*</span></label>
-                        <input type="text" name="delegatePosition" id="delegatePosition" placeholder="e.g., Senior Developer, Team Lead, Manager" required readonly class="locked-field">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="handoverNotes">Handover Notes (Optional)</label>
-                        <textarea name="handoverNotes" id="handoverNotes" placeholder="Brief notes about key responsibilities, ongoing tasks, important contacts, deadlines, etc..." maxlength="300"></textarea>
-                        <div class="char-count"><span id="charCount">0</span>/300</div>
-                    </div>
-                </div>
-
-                <input type="hidden" id="daysRequested" name="daysRequested" value="0">
-                <input type="hidden" id="datesToSubmit" name="datesToSubmit" value="">
-                <input type="hidden" id="ngapi" name="ngapi" value="">
-                <input type="hidden" id="phoneNumber" name="phoneNumber" value="">
-
-                <button type="submit" class="submit-btn">Submit Application</button>
-            </form>
+        <div>
+          <h1 class="brand-font text-lg font-extrabold tracking-tight text-textMain md:text-xl">DCash Leavform</h1>
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-surfaceMuted">Leave Management Portal</p>
         </div>
+      </div>
+
+      <div class="hidden items-center gap-4 md:flex">
+        <span class="rounded-full bg-primarySoft px-4 py-2 text-sm font-semibold text-primary">Time Off</span>
+      </div>
     </div>
+  </header>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <main class="px-4 py-8 md:px-8 md:py-10">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <nav class="mb-3 flex items-center gap-2 text-sm text-surfaceMuted">
+            <span>Portal</span>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            <span>Time Off</span>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            <span class="font-medium text-primary">Leave Application</span>
+          </nav>
 
-    <script>
-        const EMPLOYEE_ENDPOINT = "https://dhrx9wkc.rpcld.co/webhook/number";
+          <h2 class="brand-font text-3xl font-extrabold tracking-tight text-textMain md:text-4xl">
+            Leave Application
+          </h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-surfaceMuted md:text-base">
+            Submit your leave request, assign a delegate, and keep business continuity in place while you're away.
+          </p>
+        </div>
 
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                applicantEmail: params.get("applicantEmail") || "",
-                employeeNumber: params.get("employeeNumber") || "",
-                fullName: params.get("fullName") || "",
-                position: params.get("position") || "",
-                department: params.get("department") || "",
-                supervisor: params.get("supervisor") || "",
-                phoneNumber: params.get("phoneNumber") || "",
-                ngapi: params.get("ngapi") || ""
-            };
-        }
+        <div class="days-card w-full rounded-2xl p-5 shadow-soft lg:max-w-xs">
+          <div class="text-xs font-bold uppercase tracking-[0.18em] text-surfaceMuted">Leave Balance</div>
+          <div id="leaveDaysRemaining" class="mt-2 brand-font text-3xl font-black text-primary">Loading...</div>
+          <div class="mt-1 text-xs uppercase tracking-[0.14em] text-surfaceMuted">Days Remaining</div>
+        </div>
+      </div>
 
-        function setSelectValue(selectElement, value) {
-            if (!selectElement) return;
-            const optionExists = Array.from(selectElement.options).some(option => option.value === value);
-            if (optionExists) {
-                selectElement.value = value;
-            } else if (value) {
-                const newOption = document.createElement("option");
-                newOption.value = value;
-                newOption.textContent = value;
-                selectElement.appendChild(newOption);
-                selectElement.value = value;
-            }
-        }
+      <form id="leaveForm" class="space-y-8">
+        <section class="rounded-3xl border border-surfaceBorder bg-surfaceCard p-2 shadow-panel">
+          <div class="rounded-[1.3rem] bg-white p-6 md:p-8">
+            <div class="mb-8 flex items-center gap-3 border-b border-surfaceBorder pb-4">
+              <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-primarySoft text-primary">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+              <div>
+                <h3 class="brand-font text-xl font-bold text-textMain">Personal Details</h3>
+                <p class="text-sm text-surfaceMuted">Your employee information</p>
+              </div>
+            </div>
 
-        function normalizeDepartment(value) {
-            const v = String(value || "").trim().toLowerCase();
-            if (v === "tech") return "tech management";
-            return v;
-        }
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <label for="applicantEmailDisplay" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Your company email address <span class="text-red-500">*</span>
+                </label>
+                <select id="applicantEmailDisplay" disabled class="locked-field w-full">
+                  <option value="">Select your email</option>
+                  <option value="shiku.muchoki@dcash.africa">shiku.muchoki@dcash.africa</option>
+                  <option value="peter.kayere@dcash.africa">peter.kayere@dcash.africa</option>
+                  <option value="paul.wahome@dcash.africa">paul.wahome@dcash.africa</option>
+                  <option value="liz.wangechi@dcash.africa">liz.wangechi@dcash.africa</option>
+                  <option value="lenny.steve@dcash.co.ke">lenny.steve@dcash.co.ke</option>
+                  <option value="bridget.wanjiku@dcash.co.ke">bridget.wanjiku@dcash.co.ke</option>
+                  <option value="charlotte.mumbi@dcash.co.ke">charlotte.mumbi@dcash.co.ke</option>
+                  <option value="ritamargret@dcash.co.ke">ritamargret@dcash.co.ke</option>
+                  <option value="mike.muiruri@dcash.co.ke">mike.muiruri@dcash.co.ke</option>
+                  <option value="victor.mwakireti@dcash.co.ke">victor.mwakireti@dcash.co.ke</option>
+                  <option value="ian.masae@dcash.co.ke">ian.masae@dcash.co.ke</option>
+                  <option value="stephen.agai@dcash.co.ke">stephen.agai@dcash.co.ke</option>
+                  <option value="victor.kilyungi@dcash.co.ke">victor.kilyungi@dcash.co.ke</option>
+                  <option value="daniel.dawe@dcash.co.ke">daniel.dawe@dcash.co.ke</option>
+                  <option value="robinson.muhia@dcash.co.ke">robinson.muhia@dcash.co.ke</option>
+                  <option value="ephraim.kisaka@dcash.co.ke">ephraim.kisaka@dcash.co.ke</option>
+                  <option value="alex.njoroge@dcash.co.ke">alex.njoroge@dcash.co.ke</option>
+                  <option value="lina.muthoni@dcash.co.ke">lina.muthoni@dcash.co.ke</option>
+                  <option value="cecily.wahome@dcash.co.ke">cecily.wahome@dcash.co.ke</option>
+                  <option value="geoffrey.k.omukuba@dcash.co.ke">geoffrey.k.omukuba@dcash.co.ke</option>
+                  <option value="miles.muchoki@dcash.co.ke">miles.muchoki@dcash.co.ke</option>
+                </select>
+                <input type="hidden" name="applicantEmail" id="applicantEmail" />
+              </div>
 
-        function extractEmployees(payload) {
-            if (Array.isArray(payload)) return payload;
-            if (payload && Array.isArray(payload.rows)) return payload.rows;
-            if (payload && Array.isArray(payload.data)) return payload.data;
-            if (payload && Array.isArray(payload.items)) return payload.items;
-            if (payload && Array.isArray(payload.result)) return payload.result;
-            return [];
-        }
+              <div>
+                <label for="employeeNumber" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Employee number
+                </label>
+                <input id="employeeNumber" name="Employee number" type="number" required readonly class="locked-field w-full" />
+              </div>
 
-        async function fetchAllEmployees() {
-            const res = await fetch(EMPLOYEE_ENDPOINT);
-            if (!res.ok) throw new Error("Failed to load employee list");
-            const payload = await res.json();
-            return extractEmployees(payload);
-        }
+              <div>
+                <label for="fullName" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Full Name
+                </label>
+                <input id="fullName" name="Full Name" required readonly class="locked-field w-full" />
+              </div>
 
-        async function fetchEmployeeByEmail(email) {
-            const employees = await fetchAllEmployees();
-            return employees.find(emp =>
-                String(emp["Your company email address"] || "").toLowerCase() === String(email || "").toLowerCase()
-            ) || null;
-        }
+              <div>
+                <label for="position" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Position/Role
+                </label>
+                <input id="position" name="Position/Role" required readonly class="locked-field w-full" />
+              </div>
 
-        function prefillForm() {
-            const data = getQueryParams();
+              <div>
+                <label for="departmentDisplay" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Department <span class="text-red-500">*</span>
+                </label>
+                <select id="departmentDisplay" disabled class="locked-field w-full">
+                  <option value="">Select department</option>
+                  <option value="Customer support">Customer support</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Tech">Tech</option>
+                  <option value="Tech Management">Tech Management</option>
+                  <option value="Business Development/Education">Business Development/Education</option>
+                  <option value="Heads of state">Heads of state</option>
+                </select>
+                <input type="hidden" name="department" id="department" />
+              </div>
 
-            setSelectValue(document.getElementById("applicantEmailDisplay"), data.applicantEmail);
-            document.getElementById("applicantEmail").value = data.applicantEmail;
-            document.getElementById("employeeNumber").value = data.employeeNumber;
-            document.getElementById("fullName").value = data.fullName;
-            document.getElementById("position").value = data.position;
+              <div>
+                <label for="supervisorDisplay" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Immediate Supervisor <span class="text-red-500">*</span>
+                </label>
+                <select id="supervisorDisplay" disabled class="locked-field w-full">
+                  <option value="">Select supervisor</option>
+                  <option value="Steve Lenny (Marketing)">Steve Lenny (Marketing)</option>
+                  <option value="Paul Wahome (BD & Education)">Paul Wahome (BD & Education)</option>
+                  <option value="Victor Kilyungi (Tech)">Victor Kilyungi (Tech)</option>
+                  <option value="Rita Margaret (Customer Support)">Rita Margaret (Customer Support)</option>
+                  <option value="Elizabeth Wangechi (HR)">Elizabeth Wangechi (HR)</option>
+                  <option value="Ian Masae (Tech)">Ian Masae (Tech)</option>
+                </select>
+                <input type="hidden" name="Immediate Supervisor" id="supervisor" />
+              </div>
+            </div>
+          </div>
+        </section>
 
-            setSelectValue(document.getElementById("departmentDisplay"), data.department);
-            document.getElementById("department").value = data.department;
+        <section class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div class="lg:col-span-2 rounded-3xl border border-surfaceBorder bg-white p-6 shadow-panel md:p-8">
+            <div class="mb-8 flex items-center gap-3 border-b border-surfaceBorder pb-4">
+              <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-primarySoft text-primary">
+                <span class="material-symbols-outlined">event_available</span>
+              </div>
+              <div>
+                <h3 class="brand-font text-xl font-bold text-textMain">Leave Details</h3>
+                <p class="text-sm text-surfaceMuted">Specify the type and duration of your leave</p>
+              </div>
+            </div>
 
-            setSelectValue(document.getElementById("supervisorDisplay"), data.supervisor);
-            document.getElementById("supervisor").value = data.supervisor;
+            <div class="space-y-6">
+              <div>
+                <label for="leaveType" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Leave Type <span class="text-red-500">*</span>
+                </label>
+                <select name="leaveType" id="leaveType" required class="w-full">
+                  <option value="">Select leave type</option>
+                  <option value="annual">Annual Leave</option>
+                  <option value="sick">Sick Leave</option>
+                  <option value="maternity">Maternity Leave (90 days)</option>
+                  <option value="paternity">Paternity Leave (14 days)</option>
+                  <option value="emergency">Emergency Leave</option>
+                  <option value="off duty">Off duty</option>
+                  <option value="Leave without pay">Leave without pay</option>
+                </select>
+              </div>
 
-            document.getElementById("phoneNumber").value = data.phoneNumber;
-            document.getElementById("ngapi").value = data.ngapi;
-        }
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Select Leave Dates <span class="text-red-500">*</span>
+                </label>
 
-        async function loadLeaveDaysRemaining() {
-            const applicantData = getQueryParams();
-            const leaveDaysRemainingEl = document.getElementById("leaveDaysRemaining");
+                <div class="rounded-2xl border border-surfaceBorder bg-white p-5 shadow-sm overflow-x-auto">
+                  <div id="leaveDatesCalendar"></div>
+                </div>
 
-            if (!applicantData.applicantEmail) {
-                leaveDaysRemainingEl.textContent = "N/A";
-                return;
-            }
+                <input type="hidden" id="leaveDates" />
+              </div>
 
-            leaveDaysRemainingEl.textContent = "Loading...";
+              <div class="days-card rounded-2xl p-5">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex items-start gap-3">
+                    <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm">
+                      <span class="material-symbols-outlined">calendar_month</span>
+                    </div>
+                    <div>
+                      <div class="text-sm font-bold text-textMain">Total Days Taken</div>
+                      <div class="text-xs text-surfaceMuted">(Include weekends)</div>
+                    </div>
+                  </div>
 
-            try {
-                const employee = await fetchEmployeeByEmail(applicantData.applicantEmail);
-                const remaining = employee ? (employee["DAYS"] ?? "N/A") : "N/A";
-                leaveDaysRemainingEl.textContent = remaining;
-            } catch (error) {
-                console.error("Days error:", error);
-                leaveDaysRemainingEl.textContent = "Unavailable";
-            }
-        }
+                  <div class="text-left sm:text-right">
+                    <div id="totalDays" class="brand-font text-2xl font-extrabold text-primary">0 days</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        async function loadDelegatesByDepartment() {
-            const applicantData = getQueryParams();
-            const delegateEmailSelect = document.getElementById("delegateEmail");
+          <div class="space-y-8">
+            <div class="rounded-3xl border border-surfaceBorder bg-white p-6 shadow-panel">
+              <div class="mb-6 flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-primarySoft text-primary">
+                  <span class="material-symbols-outlined">assignment_ind</span>
+                </div>
+                <div>
+                  <h3 class="brand-font text-lg font-bold text-textMain">Delegation</h3>
+                  <p class="text-sm text-surfaceMuted">Assign someone to handle responsibilities while you are away</p>
+                </div>
+              </div>
 
-            delegateEmailSelect.innerHTML = '<option value="">Loading department members...</option>';
-            delegateEmailSelect.disabled = true;
+              <div class="space-y-5">
+                <div>
+                  <label for="delegateName" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                    Delegate Name <span class="text-red-500">*</span>
+                  </label>
+                  <input type="text" name="delegateName" id="delegateName" placeholder="Full name of delegate" required readonly class="locked-field w-full" />
+                </div>
 
-            try {
-                const employees = await fetchAllEmployees();
-                const applicantDept = normalizeDepartment(applicantData.department);
-                const applicantEmail = String(applicantData.applicantEmail || "").toLowerCase();
+                <div>
+                  <label for="delegateEmail" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                    Delegate's email address <span class="text-red-500">*</span>
+                  </label>
+                  <select name="delegateEmail" id="delegateEmail" required class="w-full">
+                    <option value="">Select delegate's email</option>
+                  </select>
+                </div>
 
-                const filteredEmployees = employees.filter(emp => {
-                    const email = String(emp["Your company email address"] || "").toLowerCase();
-                    const dept = normalizeDepartment(emp["Department"]);
-                    return email && dept === applicantDept && email !== applicantEmail;
-                });
+                <div>
+                  <label for="delegatePhone" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                    Delegate's Contact Number <span class="text-red-500">*</span>
+                  </label>
+                  <input type="tel" name="delegatePhone" id="delegatePhone" placeholder="+254 712 345 678" required readonly class="locked-field w-full" />
+                </div>
 
-                delegateEmailSelect.innerHTML = '<option value="">Select delegate\'s email</option>';
+                <div>
+                  <label for="delegatePosition" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                    Delegate's Position/Role <span class="text-red-500">*</span>
+                  </label>
+                  <input type="text" name="delegatePosition" id="delegatePosition" placeholder="e.g., Senior Developer, Team Lead, Manager" required readonly class="locked-field w-full" />
+                </div>
+              </div>
+            </div>
 
-                if (filteredEmployees.length === 0) {
-                    delegateEmailSelect.innerHTML = '<option value="">No delegates available in your department</option>';
-                    delegateEmailSelect.disabled = true;
-                    return;
-                }
+            <div class="rounded-3xl border border-surfaceBorder bg-white p-6 shadow-panel">
+              <div class="mb-4 flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-primarySoft text-primary">
+                  <span class="material-symbols-outlined">edit_note</span>
+                </div>
+                <div>
+                  <h3 class="brand-font text-lg font-bold text-textMain">Handover Notes</h3>
+                  <p class="text-sm text-surfaceMuted">Optional supporting notes for your delegate</p>
+                </div>
+              </div>
 
-                filteredEmployees.forEach(emp => {
-                    const email = emp["Your company email address"];
-                    const fullName = emp["Full Name"] || "No name";
-                    const option = document.createElement("option");
-                    option.value = email;
-                    option.textContent = `${email} - ${fullName}`;
-                    delegateEmailSelect.appendChild(option);
-                });
+              <div>
+                <label for="handoverNotes" class="mb-2 block text-sm font-semibold text-surfaceMuted">
+                  Handover Notes (Optional)
+                </label>
+                <textarea
+                  name="handoverNotes"
+                  id="handoverNotes"
+                  placeholder="Brief notes about key responsibilities, ongoing tasks, important contacts, deadlines, etc..."
+                  maxlength="300"
+                  class="w-full"
+                ></textarea>
+                <div class="mt-2 text-right text-xs text-surfaceMuted">
+                  <span id="charCount">0</span>/300
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                delegateEmailSelect.disabled = false;
-            } catch (error) {
-                console.error("Delegates error:", error);
-                delegateEmailSelect.innerHTML = '<option value="">Failed to load delegates</option>';
-                delegateEmailSelect.disabled = true;
-            }
-        }
+        <input type="hidden" id="daysRequested" name="daysRequested" value="0" />
+        <input type="hidden" id="datesToSubmit" name="datesToSubmit" value="" />
+        <input type="hidden" id="ngapi" name="ngapi" value="" />
+        <input type="hidden" id="phoneNumber" name="phoneNumber" value="" />
 
-        async function fetchDelegateDetailsByEmail(email) {
-            if (!email) return;
+        <div class="flex flex-col gap-4 border-t border-surfaceBorder pt-6 md:flex-row md:items-center md:justify-between">
+          <div class="flex items-center gap-2 text-sm italic text-surfaceMuted">
+            <span class="material-symbols-outlined text-[18px]">info</span>
+            <span>Please review your details before submission.</span>
+          </div>
 
-            try {
-                const employee = await fetchEmployeeByEmail(email);
+          <button
+            type="submit"
+            class="submit-btn inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-secondary px-8 py-4 text-base font-bold text-white shadow-soft transition hover:scale-[1.01] active:scale-95"
+          >
+            Submit Application
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
 
-                document.getElementById("delegateName").value = employee ? (employee["Full Name"] || "") : "";
-                document.getElementById("delegatePhone").value = employee ? (employee["Phone Number"] || "") : "";
-                document.getElementById("delegatePosition").value = employee ? (employee["Position/Role"] || "") : "";
-            } catch (error) {
-                console.error("Delegate lookup error:", error);
-                document.getElementById("delegateName").value = "";
-                document.getElementById("delegatePhone").value = "";
-                document.getElementById("delegatePosition").value = "";
-                alert("Could not fetch delegate details.");
-            }
-        }
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-        const leaveDatesPicker = flatpickr("#leaveDates", {
-            mode: "multiple",
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "F j, Y",
-            onChange: function (selectedDates) {
-                const totalDays = selectedDates.length;
-                document.getElementById("totalDays").textContent = `${totalDays} days`;
-                document.getElementById("daysRequested").value = totalDays;
+  <script>
+    const EMPLOYEE_ENDPOINT = "https://dhrx9wkc.rpcld.co/webhook/number";
 
-                const formattedDates = selectedDates.map(date => {
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, "0");
-                    const day = String(date.getDate()).padStart(2, "0");
-                    return `${year}-${month}-${day}`;
-                });
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        applicantEmail: params.get("applicantEmail") || "",
+        employeeNumber: params.get("employeeNumber") || "",
+        fullName: params.get("fullName") || "",
+        position: params.get("position") || "",
+        department: params.get("department") || "",
+        supervisor: params.get("supervisor") || "",
+        phoneNumber: params.get("phoneNumber") || "",
+        ngapi: params.get("ngapi") || ""
+      };
+    }
 
-                document.getElementById("datesToSubmit").value = formattedDates.join(", ");
-            }
+    function setSelectValue(selectElement, value) {
+      if (!selectElement) return;
+      const optionExists = Array.from(selectElement.options).some(option => option.value === value);
+      if (optionExists) {
+        selectElement.value = value;
+      } else if (value) {
+        const newOption = document.createElement("option");
+        newOption.value = value;
+        newOption.textContent = value;
+        selectElement.appendChild(newOption);
+        selectElement.value = value;
+      }
+    }
+
+    function normalizeDepartment(value) {
+      const v = String(value || "").trim().toLowerCase();
+      if (v === "tech") return "tech management";
+      return v;
+    }
+
+    function extractEmployees(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (payload && Array.isArray(payload.rows)) return payload.rows;
+      if (payload && Array.isArray(payload.data)) return payload.data;
+      if (payload && Array.isArray(payload.items)) return payload.items;
+      if (payload && Array.isArray(payload.result)) return payload.result;
+      return [];
+    }
+
+    async function fetchAllEmployees() {
+      const res = await fetch(EMPLOYEE_ENDPOINT);
+      if (!res.ok) throw new Error("Failed to load employee list");
+      const payload = await res.json();
+      return extractEmployees(payload);
+    }
+
+    async function fetchEmployeeByEmail(email) {
+      const employees = await fetchAllEmployees();
+      return employees.find(emp =>
+        String(emp["Your company email address"] || "").toLowerCase() === String(email || "").toLowerCase()
+      ) || null;
+    }
+
+    function prefillForm() {
+      const data = getQueryParams();
+
+      setSelectValue(document.getElementById("applicantEmailDisplay"), data.applicantEmail);
+      document.getElementById("applicantEmail").value = data.applicantEmail;
+      document.getElementById("employeeNumber").value = data.employeeNumber;
+      document.getElementById("fullName").value = data.fullName;
+      document.getElementById("position").value = data.position;
+
+      setSelectValue(document.getElementById("departmentDisplay"), data.department);
+      document.getElementById("department").value = data.department;
+
+      setSelectValue(document.getElementById("supervisorDisplay"), data.supervisor);
+      document.getElementById("supervisor").value = data.supervisor;
+
+      document.getElementById("phoneNumber").value = data.phoneNumber;
+      document.getElementById("ngapi").value = data.ngapi;
+    }
+
+    async function loadLeaveDaysRemaining() {
+      const applicantData = getQueryParams();
+      const leaveDaysRemainingEl = document.getElementById("leaveDaysRemaining");
+
+      if (!applicantData.applicantEmail) {
+        leaveDaysRemainingEl.textContent = "N/A";
+        return;
+      }
+
+      leaveDaysRemainingEl.textContent = "Loading...";
+
+      try {
+        const employee = await fetchEmployeeByEmail(applicantData.applicantEmail);
+        const remaining = employee ? (employee["DAYS"] ?? "N/A") : "N/A";
+        leaveDaysRemainingEl.textContent = remaining;
+      } catch (error) {
+        console.error("Days error:", error);
+        leaveDaysRemainingEl.textContent = "Unavailable";
+      }
+    }
+
+    async function loadDelegatesByDepartment() {
+      const applicantData = getQueryParams();
+      const delegateEmailSelect = document.getElementById("delegateEmail");
+
+      delegateEmailSelect.innerHTML = '<option value="">Loading department members...</option>';
+      delegateEmailSelect.disabled = true;
+
+      try {
+        const employees = await fetchAllEmployees();
+        const applicantDept = normalizeDepartment(applicantData.department);
+        const applicantEmail = String(applicantData.applicantEmail || "").toLowerCase();
+
+        const filteredEmployees = employees.filter(emp => {
+          const email = String(emp["Your company email address"] || "").toLowerCase();
+          const dept = normalizeDepartment(emp["Department"]);
+          return email && dept === applicantDept && email !== applicantEmail;
         });
 
-        document.getElementById("handoverNotes").addEventListener("input", function () {
-            document.getElementById("charCount").textContent = this.value.length;
+        delegateEmailSelect.innerHTML = '<option value="">Select delegate\'s email</option>';
+
+        if (filteredEmployees.length === 0) {
+          delegateEmailSelect.innerHTML = '<option value="">No delegates available in your department</option>';
+          delegateEmailSelect.disabled = true;
+          return;
+        }
+
+        filteredEmployees.forEach(emp => {
+          const email = emp["Your company email address"];
+          const fullName = emp["Full Name"] || "No name";
+          const option = document.createElement("option");
+          option.value = email;
+          option.textContent = `${email} - ${fullName}`;
+          delegateEmailSelect.appendChild(option);
         });
 
-        document.getElementById("delegateEmail").addEventListener("change", async function () {
-            document.getElementById("delegateName").value = "";
-            document.getElementById("delegatePhone").value = "";
-            document.getElementById("delegatePosition").value = "";
+        delegateEmailSelect.disabled = false;
+      } catch (error) {
+        console.error("Delegates error:", error);
+        delegateEmailSelect.innerHTML = '<option value="">Failed to load delegates</option>';
+        delegateEmailSelect.disabled = true;
+      }
+    }
 
-            if (this.value) {
-                await fetchDelegateDetailsByEmail(this.value);
-            }
+    async function fetchDelegateDetailsByEmail(email) {
+      if (!email) return;
+
+      try {
+        const employee = await fetchEmployeeByEmail(email);
+
+        document.getElementById("delegateName").value = employee ? (employee["Full Name"] || "") : "";
+        document.getElementById("delegatePhone").value = employee ? (employee["Phone Number"] || "") : "";
+        document.getElementById("delegatePosition").value = employee ? (employee["Position/Role"] || "") : "";
+      } catch (error) {
+        console.error("Delegate lookup error:", error);
+        document.getElementById("delegateName").value = "";
+        document.getElementById("delegatePhone").value = "";
+        document.getElementById("delegatePosition").value = "";
+        alert("Could not fetch delegate details.");
+      }
+    }
+
+    const leaveDatesPicker = flatpickr("#leaveDatesCalendar", {
+      inline: true,
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+      onChange: function (selectedDates) {
+        const totalDays = selectedDates.length;
+        document.getElementById("totalDays").textContent = `${totalDays} days`;
+        document.getElementById("daysRequested").value = totalDays;
+
+        const formattedDates = selectedDates.map(date => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
         });
 
-        document.getElementById("leaveForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
+        document.getElementById("datesToSubmit").value = formattedDates.join(", ");
+        document.getElementById("leaveDates").value = formattedDates.join(", ");
+      }
+    });
 
-            const btn = document.querySelector(".submit-btn");
-            const originalText = btn.textContent;
-            btn.textContent = "Submitting...";
-            btn.disabled = true;
+    document.getElementById("handoverNotes").addEventListener("input", function () {
+      document.getElementById("charCount").textContent = this.value.length;
+    });
 
-            const data = Object.fromEntries(new FormData(e.target).entries());
+    document.getElementById("delegateEmail").addEventListener("change", async function () {
+      document.getElementById("delegateName").value = "";
+      document.getElementById("delegatePhone").value = "";
+      document.getElementById("delegatePosition").value = "";
 
-            try {
-                const res = await fetch("https://l3j2qk3a.rcsrv.net/webhook/leavefrom", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data),
-                });
+      if (this.value) {
+        await fetchDelegateDetailsByEmail(this.value);
+      }
+    });
 
-                if (res.ok) {
-                    alert("Leave form submitted successfully!");
-                    e.target.reset();
-                    leaveDatesPicker.clear();
-                    document.getElementById("totalDays").textContent = "0 days";
-                    document.getElementById("charCount").textContent = "0";
-                    document.getElementById("leaveDaysRemaining").textContent = "Loading...";
-                    document.getElementById("delegateName").value = "";
-                    document.getElementById("delegatePhone").value = "";
-                    document.getElementById("delegatePosition").value = "";
+    document.getElementById("leaveForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-                    prefillForm();
-                    await loadDelegatesByDepartment();
-                    await loadLeaveDaysRemaining();
-                } else {
-                    alert("Failed to submit. Please try again.");
-                }
-            } catch (err) {
-                alert("Network error — please check your connection.");
-            } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
+      const btn = document.querySelector(".submit-btn");
+      const originalText = btn.textContent;
+      btn.textContent = "Submitting...";
+      btn.disabled = true;
+
+      const data = Object.fromEntries(new FormData(e.target).entries());
+
+      try {
+        const res = await fetch("https://l3j2qk3a.rcsrv.net/webhook/leavefrom", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
         });
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            prefillForm();
-            await loadDelegatesByDepartment();
-            await loadLeaveDaysRemaining();
-        });
-    </script>
+        if (res.ok) {
+          alert("Leave form submitted successfully!");
+          e.target.reset();
+          leaveDatesPicker.clear();
+          document.getElementById("totalDays").textContent = "0 days";
+          document.getElementById("charCount").textContent = "0";
+          document.getElementById("leaveDates").value = "";
+          document.getElementById("leaveDaysRemaining").textContent = "Loading...";
+          document.getElementById("delegateName").value = "";
+          document.getElementById("delegatePhone").value = "";
+          document.getElementById("delegatePosition").value = "";
+
+          prefillForm();
+          await loadDelegatesByDepartment();
+          await loadLeaveDaysRemaining();
+        } else {
+          alert("Failed to submit. Please try again.");
+        }
+      } catch (err) {
+        alert("Network error — please check your connection.");
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      prefillForm();
+      await loadDelegatesByDepartment();
+      await loadLeaveDaysRemaining();
+    });
+  </script>
 </body>
 </html>
