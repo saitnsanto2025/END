@@ -150,6 +150,16 @@
     fill: #7345b6 !important;
     padding: 6px !important;
   }
+
+  .locked-field {
+    background: #f8fafc !important;
+  }
+
+  .delegate-note {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #596065;
+  }
 </style>
 </head>
 <body class="min-h-screen bg-background text-textMain">
@@ -391,6 +401,7 @@
                   <select name="delegateEmail" id="delegateEmail" required class="w-full">
                     <option value="">Select delegate's email</option>
                   </select>
+                  <p class="delegate-note">Employees currently on leave are shown in the list and cannot be selected.</p>
                 </div>
 
                 <div>
@@ -465,6 +476,7 @@
 
   <script>
     const EMPLOYEE_ENDPOINT = "https://dhrx9wkc.rpcld.co/webhook/number";
+    const CURRENTLY_ON_LEAVE_ENDPOINT = "https://dhrx9wkc.rpcld.co/webhook/currently%20on%20leave";
     let maxAllowedDays = 0;
 
     function getQueryParams() {
@@ -502,6 +514,10 @@
       return v;
     }
 
+    function normalizeText(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
     function extractEmployees(payload) {
       if (Array.isArray(payload)) return payload;
       if (payload && Array.isArray(payload.rows)) return payload.rows;
@@ -509,6 +525,69 @@
       if (payload && Array.isArray(payload.items)) return payload.items;
       if (payload && Array.isArray(payload.result)) return payload.result;
       return [];
+    }
+
+    function extractLeaveRows(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (payload && Array.isArray(payload.rows)) return payload.rows;
+      if (payload && Array.isArray(payload.data)) return payload.data;
+      if (payload && Array.isArray(payload.items)) return payload.items;
+      if (payload && Array.isArray(payload.result)) return payload.result;
+      if (payload && Array.isArray(payload.employees)) return payload.employees;
+      return [];
+    }
+
+    function todayYMD() {
+      const today = new Date();
+      const y = today.getFullYear();
+      const m = String(today.getMonth() + 1).padStart(2, "0");
+      const d = String(today.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function extractLeaveDates(value) {
+      if (!value) return [];
+
+      return String(value)
+        .split(",")
+        .map(v => v.trim())
+        .filter(Boolean)
+        .map(v => {
+          if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+          const d = new Date(v);
+          if (!isNaN(d)) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+          }
+          return null;
+        })
+        .filter(Boolean);
+    }
+
+    function buildCurrentlyOnLeaveLookup(rows) {
+      const today = todayYMD();
+      const lookup = {
+        byEmail: new Set(),
+        byName: new Set()
+      };
+
+      rows.forEach(row => {
+        const decision = normalizeText(row["DECISION"] || row.decision);
+        if (decision !== "approved") return;
+
+        const leaveDates = extractLeaveDates(row["LEAVE DAYS TAKEN"] || row.leaveDatesTaken);
+        if (!leaveDates.includes(today)) return;
+
+        const email = normalizeText(row["EMAIL"] || row.email);
+        const staffName = normalizeText(row["STAFF NAME"] || row.staffName);
+
+        if (email) lookup.byEmail.add(email);
+        if (staffName) lookup.byName.add(staffName);
+      });
+
+      return lookup;
     }
 
     function parseBalanceToWholeDays(value) {
@@ -599,6 +678,13 @@
       ) || null;
     }
 
+    async function fetchCurrentlyOnLeave() {
+      const res = await fetch(CURRENTLY_ON_LEAVE_ENDPOINT);
+      if (!res.ok) throw new Error("Failed to load currently on leave list");
+      const payload = await res.json();
+      return extractLeaveRows(payload);
+    }
+
     function prefillForm() {
       const data = getQueryParams();
 
@@ -658,12 +744,17 @@
       delegateEmailSelect.disabled = true;
 
       try {
-        const employees = await fetchAllEmployees();
+        const [employees, leaveRows] = await Promise.all([
+          fetchAllEmployees(),
+          fetchCurrentlyOnLeave()
+        ]);
+
         const applicantDept = normalizeDepartment(applicantData.department);
-        const applicantEmail = String(applicantData.applicantEmail || "").toLowerCase();
+        const applicantEmail = normalizeText(applicantData.applicantEmail);
+        const leaveLookup = buildCurrentlyOnLeaveLookup(leaveRows);
 
         const filteredEmployees = employees.filter(emp => {
-          const email = String(emp["Your company email address"] || "").toLowerCase();
+          const email = normalizeText(emp["Your company email address"]);
           const dept = normalizeDepartment(emp["Department"]);
           return email && dept === applicantDept && email !== applicantEmail;
         });
@@ -677,11 +768,24 @@
         }
 
         filteredEmployees.forEach(emp => {
-          const email = emp["Your company email address"];
-          const fullName = emp["Full Name"] || "No name";
+          const email = String(emp["Your company email address"] || "").trim();
+          const fullName = String(emp["Full Name"] || "No name").trim();
+
+          const isOnLeave =
+            leaveLookup.byEmail.has(normalizeText(email)) ||
+            leaveLookup.byName.has(normalizeText(fullName));
+
           const option = document.createElement("option");
           option.value = email;
-          option.textContent = `${email} - ${fullName}`;
+          option.dataset.onLeave = isOnLeave ? "true" : "false";
+
+          if (isOnLeave) {
+            option.textContent = `${email} - ${fullName} (Currently on leave)`;
+            option.disabled = true;
+          } else {
+            option.textContent = `${email} - ${fullName}`;
+          }
+
           delegateEmailSelect.appendChild(option);
         });
 
@@ -736,6 +840,14 @@
       document.getElementById("delegateName").value = "";
       document.getElementById("delegatePhone").value = "";
       document.getElementById("delegatePosition").value = "";
+
+      const selectedOption = this.options[this.selectedIndex];
+
+      if (selectedOption && selectedOption.dataset.onLeave === "true") {
+        alert("This employee is currently on leave and cannot be selected as a delegate.");
+        this.value = "";
+        return;
+      }
 
       if (this.value) {
         await fetchDelegateDetailsByEmail(this.value);
